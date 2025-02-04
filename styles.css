@@ -159,28 +159,40 @@ tr:hover {
     background: var(--light);
 }
 
-.chart-container {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2rem;
-    margin-top: 2rem;
+.filter-group {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
 }
 
-.chart-wrapper {
-    position: relative;
-    height: 300px;
+.filter-group label {
+    font-weight: 600;
 }
 
-.hidden {
-    display: none;
+.filter-group input, .filter-group select {
+    width: auto;
 }
 
-.show-details-btn {
+.filter-group button {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+}
+
+.show-details-btn, .excluir-btn {
     background: var(--accent);
     padding: 0.5rem 1rem;
     border-radius: 6px;
     font-size: 0.875rem;
     cursor: pointer;
+    margin-right: 0.5rem;
+}
+
+.excluir-btn {
+    background: var(--danger);
+}
+
+.hidden {
+    display: none;
 }
 
 .detalhe-item {
@@ -198,6 +210,21 @@ tr:hover {
     padding: 0.5rem;
 }
 
+#quantidadeContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+#quantidadeContainer div {
+    background: var(--light);
+    padding: 1rem;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
 @media (max-width: 768px) {
     .container {
         padding: 1rem;
@@ -208,10 +235,6 @@ tr:hover {
     }
 
     .form-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .chart-container {
         grid-template-columns: 1fr;
     }
 
