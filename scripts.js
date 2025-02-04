@@ -30,7 +30,6 @@ function validarFormulario() {
     localStorage.setItem('registrosBeneficios', JSON.stringify(registros));
     atualizarHistorico();
     limparFormulario();
-    atualizarQuantidadeBeneficiarios();
 }
 
 // Função para atualizar o histórico
@@ -42,8 +41,8 @@ function atualizarHistorico() {
         const tr = document.createElement('tr');
         tr.innerHTML = `
             <td>${formatarData(registro.data)}</td>
-            <td class="hidden colaborador">${registro.colaborador}</td>
-            <td class="hidden beneficiario">${registro.beneficiario}</td>
+            <td>${registro.colaborador}</td>
+            <td>${registro.beneficiario}</td>
             <td>${traduzirTipo(registro.tipo)}</td>
             <td>${registro.operacao === 'inclusao' ? '✅ Inclusão' : '❌ Exclusão'}</td>
             <td>${registro.observacoes || '-'}</td>
@@ -70,7 +69,6 @@ function excluirRegistro(id) {
     registros = registros.filter(registro => registro.id !== id);
     localStorage.setItem('registrosBeneficios', JSON.stringify(registros));
     atualizarHistorico();
-    atualizarQuantidadeBeneficiarios();
 }
 
 // Função auxiliar para traduzir tipos
@@ -103,27 +101,15 @@ function limparFormulario() {
     document.querySelector('input[name="operacao"][value="inclusao"]').checked = true;
 }
 
-// Função para atualizar a quantidade de beneficiários
-function atualizarQuantidadeBeneficiarios() {
-    const container = document.getElementById('quantidadeContainer');
-    container.innerHTML = '';
-
-    const tipos = ['conv_medico', 'conv_odontologico', 'vt', 'fretado'];
-    tipos.forEach(tipo => {
-        const quantidade = registros.filter(registro => registro.tipo === tipo && registro.operacao === 'inclusao').length;
-        const div = document.createElement('div');
-        div.innerHTML = `<strong>${traduzirTipo(tipo)}:</strong> ${quantidade} colaboradores`;
-        container.appendChild(div);
-    });
-}
-
 // Função para filtrar o histórico
 function filtrarHistorico() {
-    const filtroData = document.getElementById('filtroData').value;
+    const filtroMes = document.getElementById('filtroMes').value;
     const filtroTipo = document.getElementById('filtroTipo').value;
 
     const registrosFiltrados = registros.filter(registro => {
-        const dataMatch = !filtroData || registro.data === filtroData;
+        const data = new Date(registro.data);
+        const mesAno = `${data.getFullYear()}-${String(data.getMonth() + 1).padStart(2, '0')}`;
+        const dataMatch = !filtroMes || mesAno === filtroMes;
         const tipoMatch = !filtroTipo || registro.tipo === filtroTipo;
         return dataMatch && tipoMatch;
     });
@@ -135,8 +121,8 @@ function filtrarHistorico() {
         const tr = document.createElement('tr');
         tr.innerHTML = `
             <td>${formatarData(registro.data)}</td>
-            <td class="hidden colaborador">${registro.colaborador}</td>
-            <td class="hidden beneficiario">${registro.beneficiario}</td>
+            <td>${registro.colaborador}</td>
+            <td>${registro.beneficiario}</td>
             <td>${traduzirTipo(registro.tipo)}</td>
             <td>${registro.operacao === 'inclusao' ? '✅ Inclusão' : '❌ Exclusão'}</td>
             <td>${registro.observacoes || '-'}</td>
@@ -151,4 +137,3 @@ function filtrarHistorico() {
 
 // Carregar histórico ao iniciar
 atualizarHistorico();
-atualizarQuantidadeBeneficiarios();
