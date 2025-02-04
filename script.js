@@ -1,80 +1,221 @@
-document.addEventListener("DOMContentLoaded", function () {
-    // Seleção de elementos do formulário
-    const form = document.getElementById("formulario");
-    const tabela = document.getElementById("tabela-dados").getElementsByTagName("tbody")[0];
+:root {
+    --primary: #f01c24;
+    --secondary: #f01c24;
+    --accent: #10B981;
+    --danger: #EF4444;
+    --light: #F8FAFC;
+    --dark: #1E293B;
+    --border-radius: 12px;
+    --box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
 
-    form.addEventListener("submit", function (event) {
-        event.preventDefault();
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Montserrat', sans-serif;
+}
 
-        // Coletando dados do formulário
-        const nome = document.getElementById("nome").value;
-        const idade = document.getElementById("idade").value;
-        const cidade = document.getElementById("cidade").value;
-        const participacao = document.querySelector('input[name="participacao"]:checked').value;
-        const pontoEncontro = document.getElementById("ponto-encontro").value;
+body {
+    background: #F1F5F9;
+    color: var(--dark);
+    line-height: 1.6;
+}
 
-        // Adicionando os dados na tabela
-        const newRow = tabela.insertRow();
-        newRow.insertCell(0).textContent = nome;
-        newRow.insertCell(1).textContent = idade;
-        newRow.insertCell(2).textContent = cidade;
-        newRow.insertCell(3).textContent = participacao;
-        newRow.insertCell(4).textContent = pontoEncontro;
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+}
 
-        // Resetando o formulário
-        form.reset();
+.header {
+    text-align: center;
+    padding: 2rem;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+}
 
-        // Atualizar gráficos
-        atualizarGraficos();
-    });
+.header h1 {
+    font-size: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+}
 
-    // Gráficos
-    function atualizarGraficos() {
-        const rows = tabela.getElementsByTagName("tr");
-        let contagemCidades = {};
-        let contagemParticipacao = { Sim: 0, Não: 0 };
+.section {
+    background: white;
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    box-shadow: var(--box-shadow);
+}
 
-        for (let i = 0; i < rows.length; i++) {
-            let cells = rows[i].getElementsByTagName("td");
-            if (cells.length > 0) {
-                let cidade = cells[2].textContent;
-                let participacao = cells[3].textContent;
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
 
-                contagemCidades[cidade] = (contagemCidades[cidade] || 0) + 1;
-                contagemParticipacao[participacao]++;
-            }
-        }
+.form-group {
+    margin-bottom: 1.5rem;
+}
 
-        gerarGraficoCidades(contagemCidades);
-        gerarGraficoParticipacao(contagemParticipacao);
+label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--dark);
+}
+
+input, select, textarea {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 100;
+    width: 100%;
+    padding: 1rem;
+    border: 2px solid #E2E8F0;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+input:focus, select:focus, textarea:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+input::placeholder, textarea::placeholder {
+    font-weight: 100;
+    color: #94A3B8;
+}
+
+button {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+button:hover {
+    background: var(--secondary);
+    transform: translateY(-1px);
+}
+
+.radio-group {
+    display: flex;
+    gap: 1.5rem;
+    margin: 1rem 0;
+}
+
+.radio-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+}
+
+.radio-label input[type="radio"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--primary);
+}
+
+.table-container {
+    overflow-x: auto;
+    margin-top: 1.5rem;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #E2E8F0;
+}
+
+th {
+    background: var(--primary);
+    color: white;
+    font-weight: 600;
+}
+
+tr:hover {
+    background: var(--light);
+}
+
+.chart-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.chart-wrapper {
+    position: relative;
+    height: 300px;
+}
+
+.hidden {
+    display: none;
+}
+
+.show-details-btn {
+    background: var(--accent);
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    cursor: pointer;
+}
+
+.detalhe-item {
+    background: var(--light);
+    padding: 1rem;
+    margin: 0.5rem 0;
+    border-radius: 8px;
+    display: grid;
+    grid-template-columns: 1fr 2fr 2fr 3fr;
+    gap: 1rem;
+    align-items: center;
+}
+
+.detalhe-item div {
+    padding: 0.5rem;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
     }
 
-    function gerarGraficoCidades(data) {
-        const ctx = document.getElementById("grafico-cidades").getContext("2d");
-        new Chart(ctx, {
-            type: "bar",
-            data: {
-                labels: Object.keys(data),
-                datasets: [{
-                    label: "Número de Participantes",
-                    data: Object.values(data),
-                    backgroundColor: "#d32f2f",
-                }],
-            },
-        });
+    .header h1 {
+        font-size: 2rem;
     }
 
-    function gerarGraficoParticipacao(data) {
-        const ctx = document.getElementById("grafico-participacao").getContext("2d");
-        new Chart(ctx, {
-            type: "pie",
-            data: {
-                labels: ["Sim", "Não"],
-                datasets: [{
-                    data: [data["Sim"], data["Não"]],
-                    backgroundColor: ["#4CAF50", "#F44336"],
-                }],
-            },
-        });
+    .form-grid {
+        grid-template-columns: 1fr;
     }
-});
+
+    .chart-container {
+        grid-template-columns: 1fr;
+    }
+
+    .detalhe-item {
+        grid-template-columns: 1fr;
+    }
+}
