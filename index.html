@@ -80,6 +80,7 @@
                     <option value="fretado">Transporte Fretado</option>
                 </select>
                 <button onclick="filtrarHistorico()">Filtrar</button>
+                <button onclick="gerarRelatorioPDF()">Gerar Relatório PDF</button>
             </div>
             <div class="table-container">
                 <table id="historico">
@@ -99,6 +100,7 @@
             </div>
         </section>
     </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
     <script src="scripts.js"></script>
 </body>
 </html>
