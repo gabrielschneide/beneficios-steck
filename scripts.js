@@ -136,7 +136,7 @@ function gerarRelatorioPDF() {
     doc.text(`Mês: ${filtroMes}`, 10, 20);
     doc.text(`Tipo de Benefício: ${traduzirTipo(filtroTipo)}`, 10, 30);
 
-    const tableHeaders = ["Data", "Solicitante", "Beneficiário", "Benefício", "Operação", "Observações"];
+    const tableHeaders = [["Data", "Solicitante", "Beneficiário", "Benefício", "Operação", "Observações"]];
     const tableData = registrosFiltrados.map(registro => [
         formatarData(registro.data),
         registro.colaborador,
@@ -147,7 +147,7 @@ function gerarRelatorioPDF() {
     ]);
 
     doc.autoTable({
-        head: [tableHeaders],
+        head: tableHeaders,
         body: tableData,
         startY: 40
     });
