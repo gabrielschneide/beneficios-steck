@@ -116,5 +116,44 @@ function filtrarHistorico() {
     atualizarHistorico(registrosFiltrados);
 }
 
+// Função para gerar relatório PDF
+function gerarRelatorioPDF() {
+    const filtroMes = document.getElementById('filtroMes').value;
+    const filtroTipo = document.getElementById('filtroTipo').value;
+
+    const registrosFiltrados = registros.filter(registro => {
+        const data = new Date(registro.data);
+        const mesAno = `${data.getFullYear()}-${String(data.getMonth() + 1).padStart(2, '0')}`;
+        const dataMatch = !filtroMes || mesAno === filtroMes;
+        const tipoMatch = !filtroTipo || registro.tipo === filtroTipo;
+        return dataMatch && tipoMatch;
+    });
+
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    doc.text("Relatório de Benefícios", 10, 10);
+    doc.text(`Mês: ${filtroMes}`, 10, 20);
+    doc.text(`Tipo de Benefício: ${traduzirTipo(filtroTipo)}`, 10, 30);
+
+    const tableHeaders = ["Data", "Solicitante", "Beneficiário", "Benefício", "Operação", "Observações"];
+    const tableData = registrosFiltrados.map(registro => [
+        formatarData(registro.data),
+        registro.colaborador,
+        registro.beneficiario,
+        traduzirTipo(registro.tipo),
+        registro.operacao === 'inclusao' ? 'Inclusão' : 'Exclusão',
+        registro.observacoes || '-'
+    ]);
+
+    doc.autoTable({
+        head: [tableHeaders],
+        body: tableData,
+        startY: 40
+    });
+
+    doc.save("relatorio_beneficios.pdf");
+}
+
 // Carregar histórico ao iniciar
 filtrarHistorico();
