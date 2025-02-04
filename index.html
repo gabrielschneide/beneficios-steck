@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Benefícios STECK</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>Benefícios STECK</h1>
+            <p>Gestão de Benefícios</p>
+        </header>
+
+        <!-- Seção Novo Registro -->
+        <section class="section" id="novo-registro">
+            <h2>📝 Novo Registro</h2>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Nome do Solicitante</label>
+                    <input type="text" id="colaborador" placeholder="Digite o nome">
+                </div>
+                <div class="form-group">
+                    <label>Nome do Beneficiário</label>
+                    <input type="text" id="beneficiario" placeholder="Digite o nome">
+                </div>
+                <div class="form-group">
+                    <label>Tipo de Benefício</label>
+                    <select id="benefitType">
+                        <option value="">Selecione...</option>
+                        <option value="conv_medico">Convênio Médico</option>
+                        <option value="conv_odontologico">Convênio Odontológico</option>
+                        <option value="vt">Vale Transporte</option>
+                        <option value="fretado">Transporte Fretado</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Data do Registro</label>
+                    <input type="date" id="dataRegistro">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Tipo de Operação</label>
+                <div class="radio-group">
+                    <label class="radio-label">
+                        <input type="radio" name="operacao" value="inclusao" checked>
+                        Inclusão
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="operacao" value="exclusao">
+                        Exclusão
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Observações</label>
+                <textarea id="observacoes" rows="3" placeholder="Adicione observações..."></textarea>
+            </div>
+
+            <button onclick="validarFormulario()">💾 Salvar Registro</button>
+        </section>
+
+        <!-- Seção Histórico -->
+        <section class="section" id="historico-completo">
+            <h2>📋 Histórico Completo</h2>
+            <div class="table-container">
+                <table id="historico">
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Solicitante</th>
+                            <th>Beneficiário</th>
+                            <th>Benefício</th>
+                            <th>Operação</th>
+                            <th>Observações</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Registros aparecerão aqui -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Seção Gráficos -->
+        <section class="section">
+            <h2>📊 Análise de Benefícios</h2>
+            <div class="chart-container">
+                <div class="chart-wrapper">
+                    <canvas id="benefitsChart"></canvas>
+                </div>
+                <div class="chart-wrapper">
+                    <canvas id="operationsChart"></canvas>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
