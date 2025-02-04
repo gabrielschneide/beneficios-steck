@@ -210,21 +210,6 @@ tr:hover {
     padding: 0.5rem;
 }
 
-#quantidadeContainer {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
-
-#quantidadeContainer div {
-    background: var(--light);
-    padding: 1rem;
-    border-radius: 8px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
 @media (max-width: 768px) {
     .container {
         padding: 1rem;
