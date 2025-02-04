@@ -28,16 +28,15 @@ function validarFormulario() {
 
     registros.unshift(registro);
     localStorage.setItem('registrosBeneficios', JSON.stringify(registros));
-    atualizarHistorico();
     limparFormulario();
 }
 
 // Função para atualizar o histórico
-function atualizarHistorico() {
+function atualizarHistorico(registrosFiltrados) {
     const tbody = document.getElementById('historicoBody');
     tbody.innerHTML = '';
 
-    registros.forEach(registro => {
+    registrosFiltrados.forEach(registro => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
             <td>${formatarData(registro.data)}</td>
@@ -68,7 +67,7 @@ function mostrarDetalhes(btn) {
 function excluirRegistro(id) {
     registros = registros.filter(registro => registro.id !== id);
     localStorage.setItem('registrosBeneficios', JSON.stringify(registros));
-    atualizarHistorico();
+    filtrarHistorico(); // Atualiza o histórico após a exclusão
 }
 
 // Função auxiliar para traduzir tipos
@@ -114,26 +113,8 @@ function filtrarHistorico() {
         return dataMatch && tipoMatch;
     });
 
-    const tbody = document.getElementById('historicoBody');
-    tbody.innerHTML = '';
-
-    registrosFiltrados.forEach(registro => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-            <td>${formatarData(registro.data)}</td>
-            <td>${registro.colaborador}</td>
-            <td>${registro.beneficiario}</td>
-            <td>${traduzirTipo(registro.tipo)}</td>
-            <td>${registro.operacao === 'inclusao' ? '✅ Inclusão' : '❌ Exclusão'}</td>
-            <td>${registro.observacoes || '-'}</td>
-            <td>
-                <button class="show-details-btn" onclick="mostrarDetalhes(this)">Mostrar Detalhes</button>
-                <button class="excluir-btn" onclick="excluirRegistro(${registro.id})">Excluir</button>
-            </td>
-        `;
-        tbody.appendChild(tr);
-    });
+    atualizarHistorico(registrosFiltrados);
 }
 
 // Carregar histórico ao iniciar
-atualizarHistorico();
+filtrarHistorico();
