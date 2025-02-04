@@ -1,10 +1,6 @@
 console.log("Script carregado");
 
-let registros = JSON.parse(localStorage.getItem('registrosBeneficios')) || [
-    { id: 1, colaborador: 'João Silva', beneficiario: 'Maria Silva', tipo: 'conv_medico', data: '2023-10-01', operacao: 'inclusao', observacoes: 'Primeira inclusão' },
-    { id: 2, colaborador: 'Carlos Souza', beneficiario: 'Ana Souza', tipo: 'vt', data: '2023-10-02', operacao: 'inclusao', observacoes: 'Segunda inclusão' },
-    { id: 3, colaborador: 'Pedro Oliveira', beneficiario: 'Lucas Oliveira', tipo: 'fretado', data: '2023-10-03', operacao: 'inclusao', observacoes: 'Terceira inclusão' }
-];
+let registros = JSON.parse(localStorage.getItem('registrosBeneficios')) || [];
 
 console.log("Registros carregados:", registros);
 
@@ -34,7 +30,7 @@ function validarFormulario() {
     localStorage.setItem('registrosBeneficios', JSON.stringify(registros));
     atualizarHistorico();
     limparFormulario();
-    atualizarDashboard(); // Atualizar dashboard ao adicionar novo registro
+    atualizarQuantidadeBeneficiarios();
 }
 
 // Função para atualizar o histórico
@@ -53,6 +49,7 @@ function atualizarHistorico() {
             <td>${registro.observacoes || '-'}</td>
             <td>
                 <button class="show-details-btn" onclick="mostrarDetalhes(this)">Mostrar Detalhes</button>
+                <button class="excluir-btn" onclick="excluirRegistro(${registro.id})">Excluir</button>
             </td>
         `;
         tbody.appendChild(tr);
@@ -66,6 +63,14 @@ function mostrarDetalhes(btn) {
         el.classList.toggle('hidden');
     });
     btn.textContent = btn.textContent === 'Mostrar Detalhes' ? 'Ocultar Detalhes' : 'Mostrar Detalhes';
+}
+
+// Função para excluir registro
+function excluirRegistro(id) {
+    registros = registros.filter(registro => registro.id !== id);
+    localStorage.setItem('registrosBeneficios', JSON.stringify(registros));
+    atualizarHistorico();
+    atualizarQuantidadeBeneficiarios();
 }
 
 // Função auxiliar para traduzir tipos
@@ -98,73 +103,52 @@ function limparFormulario() {
     document.querySelector('input[name="operacao"][value="inclusao"]').checked = true;
 }
 
-// Função para atualizar o dashboard
-function atualizarDashboard() {
-    const ctx1 = document.getElementById('graficoBeneficios').getContext('2d');
-    const ctx2 = document.getElementById('graficoTiposBeneficios').getContext('2d');
+// Função para atualizar a quantidade de beneficiários
+function atualizarQuantidadeBeneficiarios() {
+    const container = document.getElementById('quantidadeContainer');
+    container.innerHTML = '';
 
-    // Agrupar dados por tipo de benefício
     const tipos = ['conv_medico', 'conv_odontologico', 'vt', 'fretado'];
-    const contagem = tipos.map(tipo => registros.filter(d => d.tipo === tipo).length);
+    tipos.forEach(tipo => {
+        const quantidade = registros.filter(registro => registro.tipo === tipo && registro.operacao === 'inclusao').length;
+        const div = document.createElement('div');
+        div.innerHTML = `<strong>${traduzirTipo(tipo)}:</strong> ${quantidade} colaboradores`;
+        container.appendChild(div);
+    });
+}
 
-    console.log("Contagem de tipos:", contagem);
+// Função para filtrar o histórico
+function filtrarHistorico() {
+    const filtroData = document.getElementById('filtroData').value;
+    const filtroTipo = document.getElementById('filtroTipo').value;
 
-    if (window.graficoBeneficios) {
-        window.graficoBeneficios.destroy();
-    }
-
-    window.graficoBeneficios = new Chart(ctx1, {
-        type: 'doughnut',
-        data: {
-            labels: tipos.map(traduzirTipo),
-            datasets: [{
-                data: contagem,
-                backgroundColor: ["#36A2EB", "#FF6384", "#FFCE56", "#4BC0C0"]
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: { position: 'bottom' }
-            }
-        }
+    const registrosFiltrados = registros.filter(registro => {
+        const dataMatch = !filtroData || registro.data === filtroData;
+        const tipoMatch = !filtroTipo || registro.tipo === filtroTipo;
+        return dataMatch && tipoMatch;
     });
 
-    if (window.graficoTiposBeneficios) {
-        window.graficoTiposBeneficios.destroy();
-    }
+    const tbody = document.getElementById('historicoBody');
+    tbody.innerHTML = '';
 
-    window.graficoTiposBeneficios = new Chart(ctx2, {
-        type: 'bar',
-        data: {
-            labels: tipos.map(traduzirTipo),
-            datasets: [{
-                label: 'Benefícios',
-                data: contagem,
-                backgroundColor: "#4BC0C0"
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: { beginAtZero: true }
-            }
-        }
+    registrosFiltrados.forEach(registro => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>${formatarData(registro.data)}</td>
+            <td class="hidden colaborador">${registro.colaborador}</td>
+            <td class="hidden beneficiario">${registro.beneficiario}</td>
+            <td>${traduzirTipo(registro.tipo)}</td>
+            <td>${registro.operacao === 'inclusao' ? '✅ Inclusão' : '❌ Exclusão'}</td>
+            <td>${registro.observacoes || '-'}</td>
+            <td>
+                <button class="show-details-btn" onclick="mostrarDetalhes(this)">Mostrar Detalhes</button>
+                <button class="excluir-btn" onclick="excluirRegistro(${registro.id})">Excluir</button>
+            </td>
+        `;
+        tbody.appendChild(tr);
     });
 }
 
 // Carregar histórico ao iniciar
 atualizarHistorico();
-atualizarDashboard(); // Atualizar dashboard ao carregar a página
-
-// Adicionar event listeners para atualizar o dashboard em tempo real
-document.getElementById('colaborador').addEventListener('input', atualizarDashboard);
-document.getElementById('beneficiario').addEventListener('input', atualizarDashboard);
-document.getElementById('benefitType').addEventListener('change', atualizarDashboard);
-document.getElementById('dataRegistro').addEventListener('input', atualizarDashboard);
-document.querySelectorAll('input[name="operacao"]').forEach(radio => {
-    radio.addEventListener('change', atualizarDashboard);
-});
-document.getElementById('observacoes').addEventListener('input', atualizarDashboard);
+atualizarQuantidadeBeneficiarios();
